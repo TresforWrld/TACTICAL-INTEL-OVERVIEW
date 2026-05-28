@@ -1,0 +1,435 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ANICADE. - Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Geist:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+        @keyframes heartbeat {
+            0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 218, 243, 0.8)); }
+            50% { opacity: 0.6; transform: scale(0.98); filter: drop-shadow(0 0 2px rgba(0, 218, 243, 0.2)); }
+        }
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes rotate-fast {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        .scanline-effect {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 218, 243, 0.3), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+        }
+        .grid-overlay {
+            background-image: radial-gradient(circle, rgba(0, 218, 243, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .corner-bracket {
+            position: absolute;
+            width: 8px; height: 8px;
+            border-color: rgba(0, 218, 243, 0.4);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-primary-container": "#00626e",
+                        "primary-container": "#00e5ff",
+                        "tertiary": "#ffe9d9",
+                        "tertiary-fixed-dim": "#ffb778",
+                        "primary-fixed": "#9cf0ff",
+                        "on-secondary": "#002d6e",
+                        "primary-fixed-dim": "#00daf3",
+                        "surface-container-low": "#181c22",
+                        "surface-variant": "#31353c",
+                        "secondary-fixed": "#d9e2ff",
+                        "on-background": "#dfe2eb",
+                        "error": "#ffb4ab",
+                        "outline": "#849396",
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#00363d",
+                        "on-secondary-container": "#f2f3ff",
+                        "on-tertiary-fixed-variant": "#6c3a00",
+                        "on-primary-fixed": "#001f24",
+                        "secondary-container": "#0068ed",
+                        "outline-variant": "#3b494c",
+                        "surface-container-highest": "#31353c",
+                        "secondary-fixed-dim": "#b0c6ff",
+                        "tertiary-fixed": "#ffdcc1",
+                        "surface-container": "#1c2026",
+                        "inverse-on-surface": "#2d3137",
+                        "inverse-primary": "#006875",
+                        "surface-container-high": "#262a31",
+                        "primary": "#c3f5ff",
+                        "surface": "#10141a",
+                        "on-surface": "#dfe2eb",
+                        "on-surface-variant": "#bac9cc",
+                        "on-tertiary": "#4c2700",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-error": "#690005",
+                        "inverse-surface": "#dfe2eb",
+                        "error-container": "#93000a",
+                        "background": "#10141a",
+                        "on-secondary-fixed-variant": "#00429b",
+                        "on-tertiary-container": "#864a00",
+                        "secondary": "#b0c6ff",
+                        "surface-tint": "#00daf3",
+                        "surface-dim": "#10141a",
+                        "surface-container-lowest": "#0a0e14",
+                        "on-secondary-fixed": "#001945",
+                        "surface-bright": "#353940",
+                        "tertiary-container": "#ffc594"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "headline-xl": ["Space Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "data-mono": ["JetBrains Mono"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                        "data-mono": ["14px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- HUD GRID OVERLAY -->
+<div class="fixed inset-0 grid-overlay opacity-20 pointer-events-none z-0"></div>
+<div class="scanline-effect z-10"></div>
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface/10 backdrop-blur-xl border-b border-primary/20 shadow-[0_0_15px_rgba(0,218,243,0.15)]">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-headline-lg tracking-tighter text-primary-fixed-dim">ANICADE.</span>
+<div class="h-4 w-px bg-primary/30"></div>
+<span class="font-label-caps text-label-caps text-primary/70 tracking-widest uppercase">Central Command Hub</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex items-center gap-md">
+<button class="font-label-caps text-label-caps text-primary font-bold hover:bg-primary/10 transition-colors px-md py-xs rounded">DASHBOARD</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:bg-primary/10 transition-colors px-md py-xs rounded">SYSTEMS</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:bg-primary/10 transition-colors px-md py-xs rounded">NETWORK</button>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer active:scale-95 p-xs hover:bg-primary/10 rounded" data-icon="fingerprint">fingerprint</span>
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer active:scale-95 p-xs hover:bg-primary/10 rounded" data-icon="sensors">sensors</span>
+<span class="material-symbols-outlined text-primary-fixed-dim cursor-pointer active:scale-95 p-xs hover:bg-primary/10 rounded" data-icon="settings_input_component">settings_input_component</span>
+</div>
+</div>
+</header>
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] z-40 flex flex-col pt-md pb-lg bg-surface/5 backdrop-blur-md border-r border-primary/10 w-64 hidden md:flex">
+<div class="px-md mb-xl">
+<div class="flex items-center gap-sm mb-xs">
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center border border-primary/40">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[18px]" data-icon="hub">hub</span>
+</div>
+<div>
+<h2 class="font-headline-lg text-[18px] text-primary-fixed leading-none">J.A.R.V.I.S.</h2>
+<p class="font-data-mono text-[10px] text-primary/60 tracking-tighter">System Online</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-xs px-sm">
+<a class="flex items-center gap-md px-md py-sm rounded text-primary-container bg-primary/20 border-l-2 border-primary shadow-[0_0_10px_rgba(0,218,243,0.3)] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span class="font-data-mono text-data-mono">Core</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-data-mono text-data-mono">Tactical</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="forum">forum</span>
+<span class="font-data-mono text-data-mono">Comms</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-data-mono text-data-mono">Intel</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+<span class="font-data-mono text-data-mono">Diagnostics</span>
+</a>
+</nav>
+<div class="px-md mt-auto">
+<button class="w-full py-sm px-md border border-primary/40 rounded text-primary-fixed-dim font-label-caps text-label-caps hover:bg-primary/10 transition-all active:scale-95 uppercase tracking-widest">
+                Execute Protocol
+            </button>
+<div class="mt-md flex items-center justify-between text-on-surface-variant/40">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary" data-icon="power_settings_new">power_settings_new</span>
+<span class="font-data-mono text-[10px]">V-0.9.4.ALPHA</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 mt-16 p-md md:p-lg h-[calc(100vh-64px)] relative overflow-y-auto overflow-x-hidden">
+<!-- JARVIS Heartbeat Indicator -->
+<div class="fixed bottom-lg right-lg z-50 flex items-center gap-sm">
+<div class="w-3 h-3 bg-primary rounded-full animate-[heartbeat_2s_infinite]"></div>
+<span class="font-data-mono text-data-mono text-primary-fixed-dim tracking-[0.2em] font-bold">J.A.R.V.I.S. ACTIVE</span>
+</div>
+<!-- Central AI Core Hero Section -->
+<section class="relative w-full h-[300px] flex items-center justify-center mb-lg">
+<div class="absolute inset-0 flex items-center justify-center">
+<!-- Outer Ring -->
+<div class="absolute w-64 h-64 border-2 border-dashed border-primary/20 rounded-full animate-[rotate-slow_20s_linear_infinite]"></div>
+<!-- Middle Ring -->
+<div class="absolute w-48 h-48 border border-primary/40 rounded-full border-t-primary animate-[rotate-fast_10s_linear_infinite]"></div>
+<!-- Inner Core -->
+<div class="relative w-32 h-32 rounded-full bg-primary/10 backdrop-blur-2xl border-2 border-primary/60 flex items-center justify-center shadow-[0_0_50px_rgba(0,218,243,0.3)]">
+<span class="material-symbols-outlined text-[64px] text-primary-fixed animate-pulse" data-icon="token" style="font-variation-settings: &quot;FILL&quot; 1;">token</span>
+<!-- Data Streams -->
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 font-data-mono text-[10px] text-primary/60 whitespace-nowrap">NEURAL_LINK: STABLE</div>
+<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 font-data-mono text-[10px] text-primary/60 whitespace-nowrap">LATENCY: 4.2ms</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Quadrants -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md md:gap-lg auto-rows-fr max-w-container-max mx-auto">
+<!-- Q1: System Diagnostics -->
+<div class="relative bg-surface-container/40 backdrop-blur-md border border-primary/20 p-md rounded-lg group overflow-hidden">
+<div class="corner-bracket top-0 left-0 border-t-2 border-l-2"></div>
+<div class="corner-bracket top-0 right-0 border-t-2 border-r-2"></div>
+<div class="corner-bracket bottom-0 left-0 border-b-2 border-l-2"></div>
+<div class="corner-bracket bottom-0 right-0 border-b-2 border-r-2"></div>
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="analytics">analytics</span>
+<h3 class="font-label-caps text-label-caps text-primary uppercase">System Diagnostics</h3>
+</div>
+<span class="font-data-mono text-[10px] text-primary/40 px-xs py-[2px] border border-primary/20 rounded">LIVE_FEED</span>
+</div>
+<div class="space-y-md">
+<div class="space-y-xs">
+<div class="flex justify-between font-data-mono text-body-sm text-on-surface-variant">
+<span class="">CPU_LOAD</span>
+<span class="">42%</span>
+</div>
+<div class="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed-dim w-[42%] shadow-[0_0_10px_rgba(0,218,243,0.8)]"></div>
+</div>
+</div>
+<div class="space-y-xs">
+<div class="flex justify-between font-data-mono text-body-sm text-on-surface-variant">
+<span class="">MEMORY_ALLOC</span>
+<span class="">68%</span>
+</div>
+<div class="h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container w-[68%] shadow-[0_0_10px_rgba(0,104,237,0.5)]"></div>
+</div>
+</div>
+<!-- Mini Graph Simulation -->
+<div class="h-24 w-full flex items-end gap-1 px-1">
+<div class="w-full bg-primary/20 h-1/2" style="height: 53%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-2/3" style="height: 41%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-1/3" style="height: 69%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/40 h-3/4" style="height: 83%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/60 h-1/2" style="height: 85%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-5/6" style="height: 53%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-full" style="height: 23%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-1/4" style="height: 72%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-2/3" style="height: 64%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-1/2" style="height: 67%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-3/4" style="height: 54%; transition: height 0.8s ease-in-out;"></div>
+<div class="w-full bg-primary/20 h-2/3" style="height: 30%; transition: height 0.8s ease-in-out;"></div>
+</div>
+</div>
+</div>
+<!-- Q2: Global Intel -->
+<div class="relative bg-surface-container/40 backdrop-blur-md border border-primary/20 p-md rounded-lg group overflow-hidden h-[320px]">
+<div class="corner-bracket top-0 left-0 border-t-2 border-l-2"></div>
+<div class="corner-bracket top-0 right-0 border-t-2 border-r-2"></div>
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="public">public</span>
+<h3 class="font-label-caps text-label-caps text-primary uppercase">Global Intel</h3>
+</div>
+<span class="font-data-mono text-[10px] text-error px-xs py-[2px] border border-error/20 rounded animate-pulse">THREAT_LEVEL: LOW</span>
+</div>
+<div class="relative w-full h-48 rounded overflow-hidden border border-primary/10">
+<img class="w-full h-full object-cover opacity-60 grayscale brightness-50" data-alt="A dark, high-contrast satellite view of a futuristic metropolitan city at night, illuminated by glowing electric blue and neon cyan infrastructure lines. The atmosphere is cinematic and technical, with digital UI overlays including coordinate grids, tactical markers, and translucent data panels floating above the landscape. The color palette is dominated by deep obsidian and vibrant primary cyan, creating a professional tactical interface aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP9E32B2UJmR5c1eHZKSRMuYhbKFzxR5wSuA8xYD9uU6qBvyxFdl65xI4He1uXddJNUpTUO71G1EPopIewT_2uwczpzExukHXo22RINO7J61DN_Nk15JI82NMDrFGSWXxRbfG1VAbVOjS85N9x4vhM5lY5DwoUzrakSXFKpx692uGp6TyvLFRFN3vMU495coXGb2DM2_RrJKId5oJew07gLjPkt-AVikTHpMuhzVf3xaDyOXgyC1eqPjLHv1TMBltU0alh0chxXloJ">
+<!-- Map Overlays -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-4 h-4 rounded-full border-2 border-error animate-ping"></div>
+<div class="absolute top-1/4 left-1/3 flex flex-col">
+<span class="font-data-mono text-[8px] text-primary bg-background/80 px-1">COORD: 40.7128° N</span>
+</div>
+</div>
+</div>
+<div class="mt-md flex flex-col gap-xs">
+<div class="flex items-center gap-sm font-data-mono text-body-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="">STATION_ALPHA: ONLINE</span>
+</div>
+<div class="flex items-center gap-sm font-data-mono text-body-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="">PERIMETER_BREACH: NEGATIVE</span>
+</div>
+</div>
+</div>
+<!-- Q3: Personal Assistant -->
+<div class="relative bg-surface-container/40 backdrop-blur-md border border-primary/20 p-md rounded-lg group overflow-hidden">
+<div class="corner-bracket bottom-0 left-0 border-b-2 border-l-2"></div>
+<div class="corner-bracket bottom-0 right-0 border-b-2 border-r-2"></div>
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="person_search">person_search</span>
+<h3 class="font-label-caps text-label-caps text-primary uppercase">Personal Assistant</h3>
+</div>
+</div>
+<div class="space-y-md">
+<div class="p-sm bg-primary/5 border-l-2 border-primary">
+<p class="font-data-mono text-body-sm text-primary">CALENDAR_SYNC</p>
+<p class="font-body-sm text-on-surface mt-xs">Tactical Review at 14:00 Zulu</p>
+</div>
+<div class="space-y-sm">
+<h4 class="font-label-caps text-[10px] text-on-surface-variant/60 uppercase">Recent Comms</h4>
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-fixed text-[16px]" data-icon="alternate_email">alternate_email</span>
+</div>
+<div>
+<p class="font-data-mono text-body-sm leading-none">AGENT_K8</p>
+<p class="font-body-sm text-on-surface-variant text-[12px]">Briefing files delivered.</p>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]" data-icon="forum">forum</span>
+</div>
+<div>
+<p class="font-data-mono text-body-sm leading-none">SYSTEM_LOGS</p>
+<p class="font-body-sm text-on-surface-variant text-[12px]">Backup complete [03:00]</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Q4: Environment Control -->
+<div class="relative bg-surface-container/40 backdrop-blur-md border border-primary/20 p-md rounded-lg group overflow-hidden">
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="nest_eco_leaf">nest_eco_leaf</span>
+<h3 class="font-label-caps text-label-caps text-primary uppercase">Environment Control</h3>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="p-sm border border-primary/10 bg-primary/5 rounded">
+<span class="font-label-caps text-[10px] text-primary/60 block mb-xs uppercase">Internal Temp</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-primary leading-none">21.5</span>
+<span class="font-data-mono text-body-sm text-primary/60">°C</span>
+</div>
+</div>
+<div class="p-sm border border-primary/10 bg-primary/5 rounded">
+<span class="font-label-caps text-[10px] text-primary/60 block mb-xs uppercase">Power Draw</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-lg text-headline-lg text-primary leading-none">1.2</span>
+<span class="font-data-mono text-body-sm text-primary/60">kW</span>
+</div>
+</div>
+</div>
+<div class="mt-md space-y-sm">
+<div class="flex justify-between items-center p-xs border-b border-primary/5">
+<span class="font-data-mono text-body-sm">MAIN_LIGHTS</span>
+<div class="w-10 h-4 bg-primary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-0.5 w-3 h-3 bg-primary-fixed-dim rounded-full shadow-[0_0_8px_rgba(0,218,243,1)]"></div>
+</div>
+</div>
+<div class="flex justify-between items-center p-xs border-b border-primary/5">
+<span class="font-data-mono text-body-sm text-on-surface-variant/40">HVAC_SYSTEM</span>
+<div class="w-10 h-4 bg-surface-container-highest rounded-full relative cursor-pointer">
+<div class="absolute left-1 top-0.5 w-3 h-3 bg-on-surface-variant/40 rounded-full"></div>
+</div>
+</div>
+<div class="flex justify-between items-center p-xs">
+<span class="font-data-mono text-body-sm">SECURITY_LOCKS</span>
+<div class="w-10 h-4 bg-primary/20 rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-0.5 w-3 h-3 bg-primary-fixed-dim rounded-full shadow-[0_0_8px_rgba(0,218,243,1)]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- System Logs / Data Stream Footer -->
+<div class="mt-lg max-w-container-max mx-auto p-md border-t border-primary/10 bg-surface/30">
+<div class="flex items-center gap-md font-data-mono text-[10px] text-primary/40 overflow-hidden whitespace-nowrap">
+<span class="text-primary-fixed">[ SYSTEM_OK ]</span>
+<span class="animate-[pulse_2s_infinite]">DATALINK_ESTABLISHED: 10.0.0.124</span>
+<span class="">//</span>
+<span class="">PACKET_LOSS: 0.00%</span>
+<span class="">//</span>
+<span class="">UPTIME: 142:54:12</span>
+<span class="">//</span>
+<span class="">SECURITY_PROTOCOLS: ENFORCED</span>
+<span class="ml-auto text-on-surface-variant">SECURE_CHANNEL_AES_256</span>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Navigation Shell -->
+<footer class="md:hidden fixed bottom-0 w-full h-16 bg-surface/10 backdrop-blur-xl border-t border-primary/20 flex justify-around items-center z-50">
+<button class="flex flex-col items-center text-primary">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span class="text-[10px] font-label-caps">CORE</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="text-[10px] font-label-caps">INTEL</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+<span class="text-[10px] font-label-caps">DIAG</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[10px] font-label-caps">SET</span>
+</button>
+</footer>
+<script>
+        // Micro-interaction: Randomize some data values for a "live" feel
+        setInterval(() => {
+            const cpuVal = Math.floor(Math.random() * (48 - 38) + 38);
+            const cpuSpan = document.querySelector('.space-y-md .flex.justify-between span:last-child');
+            const cpuBar = document.querySelector('.space-y-md .h-1.5 div');
+            if(cpuSpan) cpuSpan.textContent = `${cpuVal}%`;
+            if(cpuBar) cpuBar.style.width = `${cpuVal}%`;
+        }, 3000);
+
+        // Simple animation for the mini bars
+        const bars = document.querySelectorAll('.h-24 .w-full');
+        setInterval(() => {
+            bars.forEach(bar => {
+                const height = Math.floor(Math.random() * 80) + 20;
+                bar.style.height = `${height}%`;
+                bar.style.transition = 'height 0.8s ease-in-out';
+            });
+        }, 1200);
+    </script>
+
+
+</body></html>
