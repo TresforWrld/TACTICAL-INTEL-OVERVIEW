@@ -1,0 +1,351 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ANICADE. | Comms &amp; Security Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Geist:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#2e1500",
+                    "on-primary-container": "#00626e",
+                    "primary-container": "#00e5ff",
+                    "tertiary": "#ffe9d9",
+                    "tertiary-fixed-dim": "#ffb778",
+                    "primary-fixed": "#9cf0ff",
+                    "on-secondary": "#002d6e",
+                    "primary-fixed-dim": "#00_DAF3",
+                    "surface-container-low": "#181c22",
+                    "surface-variant": "#31353c",
+                    "secondary-fixed": "#d9e2ff",
+                    "on-background": "#dfe2eb",
+                    "error": "#ffb4ab",
+                    "outline": "#849396",
+                    "on-error-container": "#ffdad6",
+                    "on-primary": "#00363d",
+                    "on-secondary-container": "#f2f3ff",
+                    "on-tertiary-fixed-variant": "#6c3a00",
+                    "on-primary-fixed": "#001f24",
+                    "secondary-container": "#0068ed",
+                    "outline-variant": "#3b494c",
+                    "surface-container-highest": "#31353c",
+                    "secondary-fixed-dim": "#b0c6ff",
+                    "tertiary-fixed": "#ffdcc1",
+                    "surface-container": "#1c2026",
+                    "inverse-on-surface": "#2d3137",
+                    "inverse-primary": "#006875",
+                    "surface-container-high": "#262a31",
+                    "primary": "#c3f5ff",
+                    "surface": "#10141a",
+                    "on-surface": "#dfe2eb",
+                    "on-surface-variant": "#bac9cc",
+                    "on-tertiary": "#4c2700",
+                    "on-primary-fixed-variant": "#004f58",
+                    "on-error": "#690005",
+                    "inverse-surface": "#dfe2eb",
+                    "error-container": "#93000a",
+                    "background": "#10141a",
+                    "on-secondary-fixed-variant": "#00429b",
+                    "on-tertiary-container": "#864a00",
+                    "secondary": "#b0c6ff",
+                    "surface-tint": "#00daf3",
+                    "surface-dim": "#10141a",
+                    "surface-container-lowest": "#0a0e14",
+                    "on-secondary-fixed": "#001945",
+                    "surface-bright": "#353940",
+                    "tertiary-container": "#ffc594"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "gutter": "20px",
+                    "xl": "48px",
+                    "base": "4px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "body-md": ["Geist"],
+                    "body-sm": ["Geist"],
+                    "headline-xl": ["Space Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "data-mono": ["JetBrains Mono"],
+                    "headline-lg": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                    "data-mono": ["14px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #10141a;
+            color: #dfe2eb;
+            overflow: hidden;
+        }
+        .grid-overlay {
+            background-image: 
+                linear-gradient(to right, rgba(0, 218, 243, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 218, 243, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .scan-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 218, 243, 0.5), transparent);
+            position: absolute;
+            top: 0;
+            animation: scan 4s linear infinite;
+            z-index: 10;
+        }
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+        .waveform-bar {
+            animation: bounce 0.6s infinite alternate;
+        }
+        @keyframes bounce {
+            from { height: 10%; }
+            to { height: 80%; }
+        }
+        .bracket-top-left { border-top: 1px solid rgba(0, 218, 243, 0.4); border-left: 1px solid rgba(0, 218, 243, 0.4); width: 12px; height: 12px; position: absolute; top: 0; left: 0; }
+        .bracket-bottom-right { border-bottom: 1px solid rgba(0, 218, 243, 0.4); border-right: 1px solid rgba(0, 218, 243, 0.4); width: 12px; height: 12px; position: absolute; bottom: 0; right: 0; }
+    </style>
+</head>
+<body class="font-body-md selection:bg-primary/30">
+<div class="fixed inset-0 grid-overlay pointer-events-none"></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface/10 dark:bg-surface/10 backdrop-blur-xl border-b border-primary/20 shadow-[0_0_15px_rgba(0,218,243,0.15)]">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg-mobile text-headline-lg-mobile tracking-tighter text-primary-fixed-dim">ANICADE.</span>
+<div class="h-4 w-[1px] bg-primary/20"></div>
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">Encryption Mode: Active</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden md:flex bg-surface-container-low border border-outline-variant px-sm py-xs items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-primary">search</span>
+<input class="bg-transparent border-none outline-none focus:ring-0 font-data-mono text-data-mono p-0 w-48 text-on-surface" placeholder="QUERY SYSTEM..." type="text">
+</div>
+<div class="flex items-center gap-sm">
+<button class="material-symbols-outlined text-primary-fixed-dim hover:bg-primary/10 transition-colors p-xs cursor-pointer active:scale-95">fingerprint</button>
+<button class="material-symbols-outlined text-primary-fixed-dim hover:bg-primary/10 transition-colors p-xs cursor-pointer active:scale-95">sensors</button>
+<button class="material-symbols-outlined text-primary-fixed-dim hover:bg-primary/10 transition-colors p-xs cursor-pointer active:scale-95">settings_input_component</button>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-16 h-[calc(100vh-64px)] z-40 flex flex-col pt-md pb-lg bg-surface/5 dark:bg-surface/5 backdrop-blur-md border-r border-primary/10 w-64 transition-all duration-300 ease-in-out">
+<div class="px-md mb-xl flex items-center gap-sm">
+<div class="w-10 h-10 border border-primary/30 rounded-sm overflow-hidden p-xs">
+<img alt="J.A.R.V.I.S." class="w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB76m5q1906mZm4ln_cPSyaBZ41p2gEFOhy6oYjEU_HYBjFoEgyQ-Rv0IEQB6vhCn3oNbQGmvHQcC49Vo6mE20gkVcg8VtDyIAL-Wvv338--QrGpY7gGkMF8py8X6vuDvvgnNXXTzyPJyjya1SnLuJg6cv_Bdj-InRE-CrC5sHi1AZH3xmv5haSyUZf6ltyNt_SmHBq-L9F8BHpnjnf30qIAWZOVGZutaNQ-1sa08-teTOFTTLlo_rGUZESCQm91GrzW8myEYPdtd7">
+</div>
+<div>
+<p class="font-headline-lg text-headline-lg text-primary-fixed leading-none">J.A.R.V.I.S.</p>
+<p class="font-data-mono text-[10px] text-primary/60 tracking-widest">SYSTEM ONLINE</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-md px-md py-sm font-data-mono text-data-mono text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="">Core</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm font-data-mono text-data-mono text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="">Tactical</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm font-data-mono text-data-mono text-primary-container bg-primary/20 border-l-2 border-primary shadow-[0_0_10px_rgba(0,218,243,0.3)] transition-all" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="">Comms</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm font-data-mono text-data-mono text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="">Intel</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm font-data-mono text-data-mono text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim transition-all" href="#">
+<span class="material-symbols-outlined">memory</span>
+<span class="">Diagnostics</span>
+</a>
+</div>
+<div class="px-md mt-auto">
+<button class="w-full py-sm border border-primary/40 font-data-mono text-data-mono text-primary hover:bg-primary/10 transition-all uppercase tracking-widest mb-md">Execute Protocol</button>
+<a class="flex items-center gap-md px-md py-sm font-data-mono text-data-mono text-on-surface-variant/60 hover:bg-error/5 hover:text-error transition-all" href="#">
+<span class="material-symbols-outlined">power_settings_new</span>
+<span class="">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 mt-16 p-lg h-[calc(100vh-64px)] overflow-hidden">
+<div class="grid grid-cols-12 grid-rows-6 gap-md h-full">
+<!-- Encrypted Chat Interface (Large Section) -->
+<div class="col-span-12 lg:col-span-8 row-span-4 bg-surface-container-low/40 backdrop-blur-md border border-primary/10 relative p-md flex flex-col">
+<div class="bracket-top-left"></div>
+<div class="bracket-bottom-right"></div>
+<div class="flex justify-between items-center border-b border-primary/10 pb-sm mb-md">
+<div class="flex items-center gap-sm">
+<span class="w-2 h-2 bg-primary animate-pulse rounded-full"></span>
+<h2 class="font-label-caps text-label-caps text-primary uppercase">Secure Channel: Epsilon-9</h2>
+</div>
+<div class="font-data-mono text-[10px] text-on-surface-variant/40 space-x-md">
+<span class="">AES-256-GCM</span>
+<span class="">IP: 192.168.1.104</span>
+<span class="">TTL: 240s</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto space-y-md pr-sm scrollbar-thin scrollbar-thumb-primary/20">
+<div class="flex flex-col gap-xs">
+<div class="flex items-center gap-sm opacity-60">
+<span class="font-data-mono text-[10px] text-primary">09:42:12</span>
+<span class="font-data-mono text-[10px] text-secondary">CENTRAL_CMD</span>
+</div>
+<p class="font-data-mono text-data-mono bg-primary/5 border-l border-primary/40 px-md py-sm max-w-[80%]">Initiating perimeter breach diagnostic. Standby for authentication handshake.</p>
+</div>
+<div class="flex flex-col items-end gap-xs">
+<div class="flex items-center gap-sm opacity-60">
+<span class="font-data-mono text-[10px] text-secondary">USER_LOCAL</span>
+<span class="font-data-mono text-[10px] text-primary">09:42:45</span>
+</div>
+<p class="font-data-mono text-data-mono bg-secondary/10 border-r border-secondary/40 px-md py-sm max-w-[80%] text-right">Handshake confirmed. Encryption keys rotated. 0xAF44...BC71 detected in memory stack.</p>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="flex items-center gap-sm opacity-60">
+<span class="font-data-mono text-[10px] text-primary">09:43:01</span>
+<span class="font-data-mono text-[10px] text-secondary">CENTRAL_CMD</span>
+</div>
+<p class="font-data-mono text-data-mono bg-primary/5 border-l border-primary/40 px-md py-sm max-w-[80%]">Proceeding with tactical synchronization. Accessing live feeds now.</p>
+</div>
+</div>
+<div class="mt-md pt-md border-t border-primary/10 flex gap-sm">
+<div class="flex-1 bg-black/40 border border-outline-variant px-md py-sm flex items-center">
+<span class="text-primary font-data-mono mr-sm">_</span>
+<input class="bg-transparent border-none outline-none focus:ring-0 font-data-mono text-data-mono w-full text-primary-fixed" placeholder="ENTER ENCRYPTED PAYLOAD..." type="text">
+</div>
+<button class="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/40 px-lg transition-all active:scale-95">
+<span class="material-symbols-outlined align-middle">send</span>
+</button>
+</div>
+</div>
+<!-- Security Camera Feeds (Quadrant) -->
+<div class="col-span-12 lg:col-span-4 row-span-3 bg-surface-container-low/40 backdrop-blur-md border border-primary/10 relative overflow-hidden">
+<div class="bracket-top-left"></div>
+<div class="bracket-bottom-right"></div>
+<div class="scan-line"></div>
+<div class="p-sm bg-primary/10 flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-primary text-[10px]">LIVE SURVEILLANCE // CAM_042</span>
+<span class="text-[10px] font-data-mono text-error animate-pulse">● RECORDING</span>
+</div>
+<div class="relative h-full">
+<img class="w-full h-full object-cover grayscale brightness-50 contrast-125" data-alt="A gritty, high-contrast security camera viewpoint of a futuristic server room corridor with cold blue lighting. In the center of the frame, a semi-transparent digital HUD overlay identifies a passing person with a glowing red square around their face, displaying scrolling biometric data and a 'FACE IDENTIFIED' label. The overall atmosphere is tense, cinematic, and technologically advanced, echoing a high-security tactical AI environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAT8b7TEKg5F781r1hZ8Fs1Gmla8XDOXVLT1W7sprPxktrW5lHCQSmn7zJkcoC0xdYncX1kqE1geiLrx-AztDv7dtIe05YIx4PwuE0nxSiXqzdTh18_InS46Pj0yJDFbDIA5FfxrfyxL8sx3CO8CZEV_aipbkFOBYGYl5WYizPNDd5CbLq3mJimbgB6jtVHifTK_t54jfAB2g9az2pFYIck-54k07YOHHj0qujqhekj_fY5Oa7BfYDk8R00_hpxH51GOIVnyaKVUo-">
+<!-- Face Identified Overlay -->
+<div class="absolute top-1/4 left-1/3 w-32 h-32 border-2 border-primary/60 flex flex-col justify-end p-xs">
+<div class="bg-primary/80 text-on-primary text-[8px] font-data-mono p-[2px] mb-1">FACE IDENTIFIED</div>
+<div class="bg-black/60 text-primary text-[6px] font-data-mono p-[2px]">ID: SUB_8829<br>RANK: OVERSEER<br>AUTH: LEVEL 5</div>
+</div>
+<div class="absolute bottom-12 right-4 flex flex-col gap-xs">
+<div class="w-16 h-1 bg-primary/20 rounded-full overflow-hidden">
+<div class="w-2/3 h-full bg-primary shadow-[0_0_5px_#00daf3]"></div>
+</div>
+<span class="text-[8px] font-data-mono text-primary/60 text-right">SIGNAL_STR: 88%</span>
+</div>
+</div>
+</div>
+<!-- Voice Interface Waveform -->
+<div class="col-span-12 lg:col-span-4 row-span-3 bg-surface-container-low/40 backdrop-blur-md border border-primary/10 relative p-md flex flex-col justify-center">
+<div class="bracket-top-left"></div>
+<div class="bracket-bottom-right"></div>
+<div class="text-center mb-md">
+<span class="font-label-caps text-label-caps text-primary tracking-widest block mb-1">VOICE INTERFACE</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant/40 uppercase">Awaiting Vocal Input...</span>
+</div>
+<div class="flex items-end justify-center gap-[2px] h-24 mb-md px-lg">
+<!-- Dynamic Waveform Simulation -->
+<div class="waveform-bar w-1 bg-primary/60" style="animation-delay: 0.1s; height: 18%;"></div>
+<div class="waveform-bar w-1 bg-primary/80" style="animation-delay: 0.4s; height: 20%;"></div>
+<div class="waveform-bar w-1 bg-primary" style="animation-delay: 0.2s; height: 62%;"></div>
+<div class="waveform-bar w-1 bg-primary/80" style="animation-delay: 0.6s; height: 76%;"></div>
+<div class="waveform-bar w-1 bg-primary/60" style="animation-delay: 0.3s; height: 16%;"></div>
+<div class="waveform-bar w-1 bg-primary/40" style="animation-delay: 0.5s; height: 15%;"></div>
+<div class="waveform-bar w-1 bg-primary/80" style="animation-delay: 0.8s; height: 26%;"></div>
+<div class="waveform-bar w-1 bg-primary" style="animation-delay: 0.1s; height: 78%;"></div>
+<div class="waveform-bar w-1 bg-primary/60" style="animation-delay: 0.7s; height: 68%;"></div>
+<div class="waveform-bar w-1 bg-primary/40" style="animation-delay: 0.2s; height: 13%;"></div>
+</div>
+<div class="flex justify-center">
+<div class="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center cursor-pointer hover:bg-primary/10 transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">mic</span>
+</div>
+</div>
+</div>
+<!-- System Logs (Bottom Strip) -->
+<div class="col-span-12 lg:col-span-8 row-span-2 bg-surface-container-low/40 backdrop-blur-md border border-primary/10 relative p-md">
+<div class="bracket-top-left"></div>
+<div class="bracket-bottom-right"></div>
+<h3 class="font-label-caps text-label-caps text-primary-fixed mb-sm">SECURITY_EVENT_LOG</h3>
+<div class="font-data-mono text-[12px] space-y-1 overflow-y-auto h-24">
+<p class="text-on-surface-variant/40">[ 09:44:02 ] <span class="text-secondary">SYSTEM</span>: Port 443 handshake successful.</p>
+<p class="text-on-surface-variant/40">[ 09:44:05 ] <span class="text-error">WARNING</span>: Unidentified packet detected at Node_07.</p>
+<p class="text-on-surface-variant/40">[ 09:44:12 ] <span class="text-primary">INFO</span>: AI heuristics confirmed localized threat mitigation.</p>
+<p class="text-on-surface-variant/40">[ 09:44:15 ] <span class="text-secondary">SYSTEM</span>: Auto-archiving session logs to Sector_G.</p>
+<p class="text-on-surface-variant/40">[ 09:44:20 ] <span class="text-primary">INFO</span>: Pulse check: All subsystems nominal.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple ambient pulse for waveform
+        const bars = document.querySelectorAll('.waveform-bar');
+        setInterval(() => {
+            bars.forEach(bar => {
+                const randomHeight = Math.floor(Math.random() * 80) + 10;
+                bar.style.height = randomHeight + '%';
+            });
+        }, 300);
+
+        // Simulated chat interaction
+        const inputField = document.querySelector('input[placeholder="ENTER ENCRYPTED PAYLOAD..."]');
+        const chatContainer = document.querySelector('.overflow-y-auto.space-y-md');
+
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && inputField.value.trim() !== '') {
+                const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+                const msg = `
+                    <div class="flex flex-col items-end gap-xs animate-pulse">
+                        <div class="flex items-center gap-sm opacity-60">
+                            <span class="font-data-mono text-[10px] text-secondary">USER_LOCAL</span>
+                            <span class="font-data-mono text-[10px] text-primary">${time}</span>
+                        </div>
+                        <p class="font-data-mono text-data-mono bg-secondary/20 border-r border-secondary/60 px-md py-sm max-w-[80%] text-right">${inputField.value.toUpperCase()}</p>
+                    </div>
+                `;
+                chatContainer.insertAdjacentHTML('beforeend', msg);
+                inputField.value = '';
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        });
+    </script>
+
+
+</body></html>
