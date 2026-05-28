@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ANICADE - Active Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@600;700&amp;family=Geist:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .scanline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 218, 243, 0.05), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 60;
+        }
+        .grid-overlay {
+            background-image: linear-gradient(rgba(0, 218, 243, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 218, 243, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        canvas#neural-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#0a0e14",
+                      "secondary-fixed-dim": "#b0c6ff",
+                      "surface-variant": "#31353c",
+                      "inverse-on-surface": "#2d3137",
+                      "on-background": "#dfe2eb",
+                      "surface-dim": "#10141a",
+                      "outline-variant": "#3b494c",
+                      "tertiary": "#ffe9d9",
+                      "error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#6c3a00",
+                      "on-secondary-container": "#f2f3ff",
+                      "secondary": "#b0c6ff",
+                      "tertiary-container": "#ffc594",
+                      "primary-fixed-dim": "#00daf3",
+                      "on-primary-fixed": "#001f24",
+                      "surface-container-low": "#181c22",
+                      "primary-fixed": "#9cf0ff",
+                      "on-tertiary-fixed": "#2e1500",
+                      "on-secondary-fixed": "#001945",
+                      "outline": "#849396",
+                      "on-primary-container": "#00626e",
+                      "inverse-surface": "#dfe2eb",
+                      "on-error": "#690005",
+                      "on-secondary-fixed-variant": "#00429b",
+                      "primary": "#c3f5ff",
+                      "surface-bright": "#353940",
+                      "secondary-fixed": "#d9e2ff",
+                      "primary-container": "#00e5ff",
+                      "on-primary-fixed-variant": "#004f58",
+                      "surface-tint": "#00daf3",
+                      "tertiary-fixed": "#ffdcc1",
+                      "on-error-container": "#ffdad6",
+                      "background": "#10141a",
+                      "surface": "#10141a",
+                      "secondary-container": "#0068ed",
+                      "on-secondary": "#002d6e",
+                      "on-surface-variant": "#bac9cc",
+                      "on-tertiary": "#4c2700",
+                      "surface-container-highest": "#31353c",
+                      "on-tertiary-container": "#864a00",
+                      "on-surface": "#dfe2eb",
+                      "surface-container": "#1c2026",
+                      "inverse-primary": "#006875",
+                      "error": "#ffb4ab",
+                      "on-primary": "#00363d",
+                      "tertiary-fixed-dim": "#ffb778",
+                      "surface-container-high": "#262a31"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "base": "4px",
+                      "gutter": "20px",
+                      "xl": "48px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "label-caps": ["JetBrains Mono"],
+                      "headline-xl": ["Space Grotesk"],
+                      "body-md": ["Geist"],
+                      "headline-lg": ["Space Grotesk"],
+                      "body-sm": ["Geist"],
+                      "data-mono": ["JetBrains Mono"],
+                      "headline-lg-mobile": ["Space Grotesk"]
+              },
+              "fontSize": {
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "data-mono": ["14px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- HUD Background Layer -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&amp;w=2022&amp;auto=format&amp;fit=crop')] bg-cover bg-center opacity-20 mix-blend-screen" data-alt="A deep space nebula."></div>
+<div class="absolute inset-0 grid-overlay opacity-30"></div>
+<div class="scanline-overlay"></div>
+</div>
+<!-- Top Navigation -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 backdrop-blur-xl border-b border-primary/20 bg-surface/10">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<h1 class="font-headline-lg text-headline-lg tracking-tighter text-primary-fixed-dim">A.R.C.H.I.V.E.S.</h1>
+</div>
+<div class="flex gap-lg">
+<div class="flex items-center gap-sm px-md py-xs border border-primary/20 rounded-lg font-data-mono text-data-mono text-primary-fixed-dim">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim shadow-[0_0_8px_#00daf3]"></span>
+            ACTIVE MODE
+        </div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-primary/10 transition-colors p-2 rounded-full">fingerprint</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-primary/10 transition-colors p-2 rounded-full">sensors</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-primary/10 transition-colors p-2 rounded-full">settings_input_component</span>
+</div>
+</div>
+</header>
+<!-- Main Kinetic Canvas -->
+<main class="w-full h-screen flex items-center justify-center relative z-10 p-xl overflow-hidden">
+<!-- Central Void Container -->
+<div class="relative w-full h-full flex items-center justify-center">
+<!-- Canvas for Particle Engine -->
+<canvas id="neural-core"></canvas>
+<!-- Decorative Brackets (Remain fixed around center) -->
+<div class="absolute w-[450px] h-[450px] pointer-events-none">
+<div class="absolute -top-4 -left-4 w-16 h-16 border-t-2 border-l-2 border-primary/40"></div>
+<div class="absolute -bottom-4 -right-4 w-16 h-16 border-b-2 border-r-2 border-primary/40"></div>
+<div class="absolute -top-4 -right-4 w-16 h-16 border-t-2 border-r-2 border-primary/40"></div>
+<div class="absolute -bottom-4 -left-4 w-16 h-16 border-b-2 border-l-2 border-primary/40"></div>
+<!-- Data Overlay Inside Brackets -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+<span class="font-data-mono text-[64px] font-bold text-primary-fixed-dim drop-shadow-[0_0_15px_rgba(0,218,243,0.5)]" id="active-clock">00:00</span>
+<p class="font-label-caps text-label-caps text-primary/40 tracking-[0.6em]">NEURAL CORE ACTIVE</p>
+</div>
+</div>
+<!-- Rotating HUD Rings -->
+<div class="absolute w-[500px] h-[500px] border border-primary/10 rounded-full animate-[rotate-slow_30s_linear_infinite] pointer-events-none"></div>
+<div class="absolute w-[600px] h-[600px] border border-primary/5 rounded-full animate-[rotate-slow_45s_linear_infinite_reverse] pointer-events-none"></div>
+</div>
+<!-- Tactical Widgets -->
+<div class="absolute top-32 left-10 p-md backdrop-blur-md bg-surface/10 border-l border-primary/40 border-t border-primary/10 rounded-br-3xl z-20">
+<div class="flex items-center gap-md mb-sm">
+<span class="material-symbols-outlined text-primary-fixed-dim text-sm" style="font-variation-settings: 'FILL' 1;">radar</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Neural Synapse Load</span>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between gap-xl">
+<span class="font-data-mono text-xs text-on-surface-variant/60">THROUGHPUT</span>
+<span class="font-data-mono text-xs text-primary-fixed-dim" id="throughput-val">94.2%</span>
+</div>
+<div class="w-full h-[2px] bg-primary/10 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/40 w-full animate-pulse"></div>
+</div>
+<div class="flex justify-between">
+<span class="font-data-mono text-xs text-on-surface-variant/60">SYNC_STATUS</span>
+<span class="font-data-mono text-xs text-secondary-fixed-dim">OPTIMIZED</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 right-10 p-md backdrop-blur-md bg-surface/10 border-r border-primary/40 border-b border-primary/10 rounded-tl-3xl text-right z-20">
+<div class="flex items-center justify-end gap-md mb-sm">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Active Runtime</span>
+<span class="material-symbols-outlined text-primary-fixed-dim text-sm">settings_heart</span>
+</div>
+<div class="space-y-sm">
+<p class="font-data-mono text-xs text-on-surface-variant/80">UPTIME: <span class="text-primary-fixed-dim" id="system-uptime">00:00:00</span></p>
+<div class="flex gap-xs justify-end">
+<div class="w-1 h-3 bg-primary"></div>
+<div class="w-1 h-3 bg-primary"></div>
+<div class="w-1 h-3 bg-primary"></div>
+<div class="w-1 h-3 bg-primary/60"></div>
+<div class="w-1 h-3 bg-primary/20"></div>
+</div>
+<p class="font-data-mono text-[10px] text-on-surface-variant/40">KINETIC_ENGINE_STABLE</p>
+</div>
+</div>
+<!-- Left Data Strip -->
+<div class="absolute left-10 h-1/2 flex flex-col justify-between py-xl opacity-60 z-20">
+<div class="flex flex-col gap-base">
+<div class="w-1 h-1 bg-primary"></div>
+<div class="w-1 h-8 bg-primary/20"></div>
+<span class="font-label-caps text-[10px] rotate-90 origin-left translate-x-2 text-on-surface-variant mt-md">CORE_STREAM</span>
+</div>
+<div class="font-data-mono text-[10px] text-primary/60 space-y-xs">
+<p>LATENCY: 4ms</p>
+<p>NODES: 1024</p>
+<p>FLUX: <span id="flux-val">0.42</span></p>
+</div>
+</div>
+<!-- Bottom HUD Info -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-sm z-20">
+<div class="flex gap-md">
+<div class="w-32 h-[1px] bg-gradient-to-r from-transparent to-primary/40"></div>
+<div class="w-2 h-2 border border-primary rotate-45"></div>
+<div class="w-32 h-[1px] bg-gradient-to-l from-transparent to-primary/40"></div>
+</div>
+<p class="font-label-caps text-[10px] text-primary/60 uppercase tracking-[1em]">High Frequency Core Access</p>
+</div>
+</main>
+<script>
+    // Particle System Implementation
+    const canvas = document.getElementById('neural-core');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: null, y: null, radius: 150 };
+    let isActive = true;
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.x;
+        mouse.y = e.y;
+    });
+
+    resize();
+
+    class Particle {
+        constructor() {
+            this.init();
+        }
+
+        init() {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 200;
+            this.x = canvas.width / 2 + Math.cos(angle) * distance;
+            this.y = canvas.height / 2 + Math.sin(angle) * distance;
+            this.size = Math.random() * 1.5 + 0.5;
+            this.baseX = this.x;
+            this.baseY = this.y;
+            this.density = (Math.random() * 30) + 1;
+            this.color = '#c3f5ff';
+            this.velocity = Math.random() * 2 + 1;
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        update() {
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            let forceDirectionX = dx / distance;
+            let forceDirectionY = dy / distance;
+            let maxDistance = mouse.radius;
+            let force = (maxDistance - distance) / maxDistance;
+            let directionX = forceDirectionX * force * this.density;
+            let directionY = forceDirectionY * force * this.density;
+
+            if (distance < mouse.radius) {
+                this.x -= directionX;
+                this.y -= directionY;
+            } else {
+                if (this.x !== this.baseX) {
+                    let dx = this.x - this.baseX;
+                    this.x -= dx / 10;
+                }
+                if (this.y !== this.baseY) {
+                    let dy = this.y - this.baseY;
+                    this.y -= dy / 10;
+                }
+            }
+
+            // Kinetic jitter
+            this.x += (Math.random() - 0.5) * this.velocity;
+            this.y += (Math.random() - 0.5) * this.velocity;
+        }
+    }
+
+    function init() {
+        particles = [];
+        const numberOfParticles = 800;
+        for (let i = 0; i < numberOfParticles; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Central Glow
+        const gradient = ctx.createRadialGradient(
+            canvas.width / 2, canvas.height / 2, 0,
+            canvas.width / 2, canvas.height / 2, 300
+        );
+        gradient.addColorStop(0, 'rgba(0, 218, 243, 0.15)');
+        gradient.addColorStop(1, 'rgba(0, 218, 243, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            
+            // Connect nearby particles
+            for (let j = i; j < particles.length; j++) {
+                let dx = particles[i].x - particles[j].x;
+                let dy = particles[i].y - particles[j].y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 50) {
+                    ctx.strokeStyle = `rgba(0, 218, 243, ${1 - distance / 50})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+
+    // UI Updates
+    function updateHUD() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        document.getElementById('active-clock').textContent = `${hours}:${minutes}`;
+        document.getElementById('system-uptime').textContent = `03:22:${seconds}`;
+        
+        // Random data fluctuations
+        document.getElementById('throughput-val').textContent = (90 + Math.random() * 9).toFixed(1) + '%';
+        document.getElementById('flux-val').textContent = (Math.random()).toFixed(3);
+    }
+
+    setInterval(updateHUD, 1000);
+    updateHUD();
+</script>
+</body></html>
