@@ -1,0 +1,387 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ANICADE - Tactical Intel Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Geist:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        
+        @keyframes radar-sweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .radar-sweep {
+            animation: radar-sweep 4s linear infinite;
+            background: conic-gradient(from 0deg at 50% 50%, rgba(0, 218, 243, 0.2) 0deg, rgba(0, 218, 243, 0) 90deg);
+        }
+
+        .scanning-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00daf3, transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .terminal-scroll::-webkit-scrollbar {
+            width: 2px;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: #00daf333;
+        }
+
+        .bracket-tl { border-top: 1px solid #00daf388; border-left: 1px solid #00daf388; }
+        .bracket-tr { border-top: 1px solid #00daf388; border-right: 1px solid #00daf388; }
+        .bracket-bl { border-bottom: 1px solid #00daf388; border-left: 1px solid #00daf388; }
+        .bracket-br { border-bottom: 1px solid #00daf388; border-right: 1px solid #00daf388; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-primary-container": "#00626e",
+                        "primary-container": "#00e5ff",
+                        "tertiary": "#ffe9d9",
+                        "tertiary-fixed-dim": "#ffb778",
+                        "primary-fixed": "#9cf0ff",
+                        "on-secondary": "#002d6e",
+                        "primary-fixed-dim": "#00daf3",
+                        "surface-container-low": "#181c22",
+                        "surface-variant": "#31353c",
+                        "secondary-fixed": "#d9e2ff",
+                        "on-background": "#dfe2eb",
+                        "error": "#ffb4ab",
+                        "outline": "#849396",
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#00363d",
+                        "on-secondary-container": "#f2f3ff",
+                        "on-tertiary-fixed-variant": "#6c3a00",
+                        "on-primary-fixed": "#001f24",
+                        "secondary-container": "#0068ed",
+                        "outline-variant": "#3b494c",
+                        "surface-container-highest": "#31353c",
+                        "secondary-fixed-dim": "#b0c6ff",
+                        "tertiary-fixed": "#ffdcc1",
+                        "surface-container": "#1c2026",
+                        "inverse-on-surface": "#2d3137",
+                        "inverse-primary": "#006875",
+                        "surface-container-high": "#262a31",
+                        "primary": "#c3f5ff",
+                        "surface": "#10141a",
+                        "on-surface": "#dfe2eb",
+                        "on-surface-variant": "#bac9cc",
+                        "on-tertiary": "#4c2700",
+                        "on-primary-fixed-variant": "#004f58",
+                        "on-error": "#690005",
+                        "inverse-surface": "#dfe2eb",
+                        "error-container": "#93000a",
+                        "background": "#10141a",
+                        "on-secondary-fixed-variant": "#00429b",
+                        "on-tertiary-container": "#864a00",
+                        "secondary": "#b0c6ff",
+                        "surface-tint": "#00daf3",
+                        "surface-dim": "#10141a",
+                        "surface-container-lowest": "#0a0e14",
+                        "on-secondary-fixed": "#001945",
+                        "surface-bright": "#353940",
+                        "tertiary-container": "#ffc594"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "gutter": "20px",
+                        "xl": "48px",
+                        "base": "4px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "headline-xl": ["Space Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "data-mono": ["JetBrains Mono"],
+                        "headline-lg": ["Space Grotesk"],
+                        "headline-lg-mobile": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                        "data-mono": ["14px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary/30 overflow-hidden">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface/10 backdrop-blur-xl border-b border-primary/20 shadow-[0_0_15px_rgba(0,218,243,0.15)]">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-headline-lg tracking-tighter text-primary-fixed-dim">ANICADE.</span>
+<div class="h-4 w-px bg-primary/20 mx-sm"></div>
+<span class="font-label-caps text-label-caps text-primary tracking-widest" style="opacity: 1;">[ SYSTEM ACTIVE ]</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm bg-primary/5 px-md py-xs rounded border border-primary/20">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[18px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-data-mono font-data-mono text-sm w-64 placeholder:text-on-surface-variant/40" placeholder="QUERY ENCRYPTED DATA..." type="text">
+</div>
+<div class="flex gap-sm">
+<button class="w-10 h-10 flex items-center justify-center hover:bg-primary/10 transition-colors cursor-pointer active:scale-95 text-on-surface-variant">
+<span class="material-symbols-outlined">fingerprint</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-primary/10 transition-colors cursor-pointer active:scale-95 text-on-surface-variant">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-primary/10 transition-colors cursor-pointer active:scale-95 text-on-surface-variant">
+<span class="material-symbols-outlined">settings_input_component</span>
+</button>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] z-40 flex flex-col pt-md pb-lg bg-surface/5 backdrop-blur-md border-r border-primary/10 w-64">
+<div class="px-md mb-xl">
+<div class="flex items-center gap-sm mb-xs">
+<div class="w-10 h-10 rounded bg-primary/20 border border-primary/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: &quot;FILL&quot; 1;">account_circle</span>
+</div>
+<div>
+<div class="font-headline-lg text-sm text-primary-fixed">J.A.R.V.I.S.</div>
+<div class="font-data-mono text-[10px] text-primary/60 uppercase tracking-tighter">System Online</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-sm space-y-1">
+<a class="flex items-center gap-md px-md py-sm rounded transition-all duration-300 ease-in-out text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-data-mono text-data-mono">Core</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded transition-all duration-300 ease-in-out text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim" href="#">
+<span class="material-symbols-outlined">security</span>
+<span class="font-data-mono text-data-mono">Tactical</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded transition-all duration-300 ease-in-out text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-data-mono text-data-mono">Comms</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded transition-all duration-300 ease-in-out text-primary-container bg-primary/20 border-l-2 border-primary shadow-[0_0_10px_rgba(0,218,243,0.3)]" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-data-mono text-data-mono">Intel</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded transition-all duration-300 ease-in-out text-on-surface-variant/60 hover:bg-primary/5 hover:text-primary-fixed-dim" href="#">
+<span class="material-symbols-outlined">memory</span>
+<span class="font-data-mono text-data-mono">Diagnostics</span>
+</a>
+</nav>
+<div class="px-md mt-auto">
+<button class="w-full py-md border border-primary/30 font-label-caps text-label-caps text-primary hover:bg-primary/20 transition-all active:scale-95 mb-md">
+                Execute Protocol
+            </button>
+<a class="flex items-center gap-md px-md py-sm rounded text-on-surface-variant/60 hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined">power_settings_new</span>
+<span class="font-data-mono text-data-mono">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-20 p-md h-screen grid grid-cols-12 grid-rows-6 gap-md overflow-hidden bg-[radial-gradient(circle_at_50%_50%,_rgba(0,104,117,0.05)_0%,_transparent_100%)]">
+<!-- Background Grid Decoration -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] overflow-hidden" style="background-image: linear-gradient(#00daf3 1px, transparent 1px), linear-gradient(90deg, #00daf3 1px, transparent 1px); background-size: 40px 40px;"></div>
+<!-- Central Tactical Map -->
+<section class="col-span-8 row-span-4 relative rounded-lg border border-primary/20 bg-surface-container-lowest/40 backdrop-blur-md overflow-hidden group">
+<!-- Corner Brackets -->
+<div class="absolute top-0 left-0 w-8 h-8 bracket-tl"></div>
+<div class="absolute top-0 right-0 w-8 h-8 bracket-tr"></div>
+<div class="absolute bottom-0 left-0 w-8 h-8 bracket-bl"></div>
+<div class="absolute bottom-0 right-0 w-8 h-8 bracket-br"></div>
+<div class="absolute top-sm right-sm flex gap-xs">
+<span class="px-sm py-xs bg-surface-container-high border border-primary/30 font-data-mono text-[10px] text-primary">LAT: 34.0550° N</span>
+<span class="px-sm py-xs bg-surface-container-high border border-primary/30 font-data-mono text-[10px] text-primary">LNG: 118.2445° W</span>
+</div>
+<!-- Map Placeholder with data-alt -->
+<div class="absolute inset-0 z-0 opacity-50 transition-transform duration-[10s] group-hover:scale-110">
+<img class="w-full h-full object-cover grayscale invert contrast-[1.2]" data-alt="A highly detailed topographical satellite map of a futuristic urban metropolitan area at night, rendered in deep indigo and neon cyan. The map features glowing arterial roads, pulsing data hubs, and translucent wireframe structures indicating high-altitude assets. The visual style is cinematic and technical, utilizing a dark obsidian background with electric blue light emission to create a sophisticated tactical surveillance interface aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANCTMHlqA2glgQqCk3c4jaIcK0-eQDDV44buUsmBuOCPumVOGw1S6kFYnmzC2dcuEzOt--OTLiqwluh3xY6G4tpicRG4B7wPUlmtSuzc6-jBX5biY1nfqjszBNMU6MnG3PAn_TuSj18TPfj8Vl_R68yf8AjmKg9j4FD--LGAd9L3tbUQwD-ZA3lDszPYU60PsVq1vt2YJ6-9tPfEMNupaFwMXi0h94dV-rep82c8q35NX474ME9UVSclgAWSydHasBisuSZSqDulOn">
+</div>
+<!-- Radar Sweep UI Overlay -->
+<div class="absolute inset-0 z-10 pointer-events-none">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-primary/10 rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-primary/10 rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] border border-primary/10 rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] radar-sweep rounded-full opacity-30"></div>
+<!-- Assets on Map -->
+<div class="absolute top-1/3 left-1/4 animate-pulse">
+<div class="relative">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: &quot;FILL&quot; 1;">location_on</span>
+<div class="absolute -top-6 -left-12 bg-primary/20 backdrop-blur-sm border border-primary/40 px-xs py-1 rounded">
+<span class="font-data-mono text-[10px] text-primary whitespace-nowrap">FRIENDLY: ALPHA_6</span>
+</div>
+</div>
+</div>
+<div class="absolute bottom-1/4 right-1/3">
+<div class="relative">
+<span class="material-symbols-outlined text-on-tertiary-container animate-ping absolute scale-150 opacity-20" style="font-variation-settings: &quot;FILL&quot; 1;">warning</span>
+<span class="material-symbols-outlined text-tertiary-fixed-dim" style="font-variation-settings: &quot;FILL&quot; 1;">warning</span>
+<div class="absolute top-6 -left-12 bg-error-container/40 backdrop-blur-sm border border-error/40 px-xs py-1 rounded">
+<span class="font-data-mono text-[10px] text-tertiary-fixed-dim whitespace-nowrap">ALERT: UNIDENTIFIED_SIGNAL</span>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-md left-md">
+<div class="font-headline-lg text-lg text-primary tracking-tight">TACTICAL_OVERLAY_01</div>
+<div class="font-data-mono text-[10px] text-on-surface-variant/60">SCANNING SECTOR 7-G | REAL-TIME TELEMETRY</div>
+</div>
+</section>
+<!-- Right Sidebar: Biometric Scans -->
+<section class="col-span-4 row-span-3 rounded-lg border border-primary/20 bg-surface-container/30 backdrop-blur-md p-md flex flex-col gap-md relative overflow-hidden">
+<div class="absolute inset-0 scanning-line pointer-events-none z-20"></div>
+<div class="flex justify-between items-center border-b border-primary/10 pb-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase">Biometric Profiles</span>
+<span class="material-symbols-outlined text-primary text-sm">monitor_heart</span>
+</div>
+<div class="space-y-md overflow-y-auto pr-sm terminal-scroll">
+<!-- Bio Card 1 -->
+<div class="p-sm border border-primary/10 bg-primary/5 rounded flex gap-sm items-start relative overflow-hidden">
+<div class="w-12 h-12 rounded border border-primary/30 overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up high-contrast portrait of a male operative with digital facial recognition scanning markers overlaid across his features. The image is rendered in cold blue tones with a grainy, technical filter, emphasizing textures and sharpness. Soft neon cyan highlights define the contours of the face against a deep obsidian background, creating a futuristic biometric profile aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu5YfiQGLOcDLWYznSVC2SyH9qYkhFpbRmAbukjOzg2BvD2QYiScPjQXyj-aKwXguKWyoVl-bQqHHK6FUxvh4WTrVYqW1NPBlUnCEF7LYwYujdN_E6lI9KaGIjqNdqNY2sfOFDwA7I_HzRl-JeeUeSfKuRtj-ajC0S34mwie3EJvhnfIZ8NbSHvML0Qz8l4GSPOFp59JPyre3_bpRdMYK2aS5vLhJS-SV8Nb6WuICjBQbICHW2br8OvaxX3SOg2-NcjIMSzNl2VY31">
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-data-mono text-sm text-primary">UNIT_KAYLE</span>
+<span class="text-[10px] text-primary/60 font-data-mono">ID: 9920-X</span>
+</div>
+<div class="grid grid-cols-2 gap-x-2 gap-y-1">
+<div class="text-[10px] text-on-surface-variant/40 font-data-mono">HR: 72 BPM</div>
+<div class="text-[10px] text-on-surface-variant/40 font-data-mono">O2: 98%</div>
+<div class="col-span-2 h-1 bg-surface-variant rounded-full mt-1">
+<div class="h-full bg-primary-fixed-dim w-3/4 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bio Card 2 (Alert State) -->
+<div class="p-sm border border-tertiary-fixed-dim/30 bg-tertiary/5 rounded flex gap-sm items-start relative overflow-hidden">
+<div class="w-12 h-12 rounded border border-tertiary-fixed-dim/30 overflow-hidden shrink-0">
+<img class="w-full h-full object-cover grayscale" data-alt="A futuristic biometric profile photograph of a female operative with intense amber-colored technical overlays tracking eye movement and pulse. The lighting is low-key with sharp, warm amber accents cutting through dark shadows. The overall aesthetic is one of high-priority tactical data, featuring digital artifacts and a slight noise texture typical of classified intelligence feeds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUXOV_IqbxTfEXW8na-z9Yh11_C6qt6ZFH2V6zG57lAF7r6qnvfLHD4oWMU6HRsGTXBL1uK_IhysiwYa4OVcc4t5_5RlaW3ev0iIZC5lQNU2FuS85qAXQQZ-Xhe6Ctfe0p2yhwHtkNIeuyH_ELAhgWZT6kfUeFykRiJ3utUefRA67h6TiRDiI7R12zwaJs16EIRu139ACcS7o9IEVffKt6ifZseTkC3AAk3mR1mQz0FOTq-myiR4bxe_eZnwRMN36KEhcAu5xDQynh">
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<span class="font-data-mono text-sm text-tertiary-fixed-dim">UNIT_V_9</span>
+<span class="text-[10px] text-tertiary-fixed-dim/60 font-data-mono">ID: 4412-B</span>
+</div>
+<div class="grid grid-cols-2 gap-x-2 gap-y-1">
+<div class="text-[10px] text-tertiary-fixed-dim/80 font-data-mono font-bold">HR: 142 BPM [!]</div>
+<div class="text-[10px] text-tertiary-fixed-dim/80 font-data-mono">STRESS: CRITICAL</div>
+<div class="col-span-2 h-1 bg-surface-variant rounded-full mt-1">
+<div class="h-full bg-tertiary-fixed-dim w-full rounded-full animate-pulse"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Sidebar: Terminal Log -->
+<section class="col-span-4 row-span-3 rounded-lg border border-primary/20 bg-surface-container/30 backdrop-blur-md p-md flex flex-col gap-sm">
+<div class="flex justify-between items-center border-b border-primary/10 pb-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase">Activity Terminal</span>
+<span class="px-xs py-[2px] bg-primary/20 rounded font-data-mono text-[8px] text-primary">ROOT_ACCESS</span>
+</div>
+<div class="flex-1 overflow-y-auto terminal-scroll space-y-2 font-data-mono text-[11px] leading-relaxed">
+<p class="text-on-surface-variant/60"><span class="text-primary">[ 14:22:01 ]</span> SYSTEM_BOOT_SEQUENCE_SUCCESSFUL</p>
+<p class="text-on-surface-variant/60"><span class="text-primary">[ 14:22:05 ]</span> UPLINK_ESTABLISHED_SECTOR_7G</p>
+<p class="text-tertiary-fixed-dim animate-pulse"><span class="text-tertiary-fixed-dim font-bold">[ 14:23:12 ] ALERT:</span> PROXIMITY_SENSOR_TRIPPED_ID_UNKNOWN</p>
+<p class="text-on-surface-variant/60"><span class="text-primary">[ 14:23:45 ]</span> UNIT_ALPHA_6_REDIRECTED_TO_INTERCEPT</p>
+<p class="text-on-surface-variant/60"><span class="text-primary">[ 14:24:00 ]</span> SCANNING_BIOMETRIC_ENVELOPE...</p>
+<p class="text-on-surface-variant/60"><span class="text-primary">[ 14:24:02 ]</span> PACKET_LOSS_0.02%_COMPENSATING</p>
+<p class="text-on-surface-variant/60"><span class="text-primary">[ 14:24:10 ]</span> ENCRYPTED_CHANNEL_X9_OPENED</p>
+<p class="text-on-surface-variant/60"><span class="text-primary">[ 14:24:22 ]</span> WAITING_FOR_COMMAND_INPUT...</p>
+<div class="flex gap-2 items-center">
+<span class="text-primary">&gt;</span>
+<span class="w-2 h-4 bg-primary animate-[bounce_1s_infinite]"></span>
+</div>
+</div>
+</section>
+<!-- Bottom Stats Row -->
+<div class="col-span-3 row-span-2 rounded-lg border border-primary/10 bg-surface-container-high/40 p-md flex flex-col justify-between">
+<div class="font-label-caps text-[10px] text-on-surface-variant/60 tracking-widest">NETWORK_LATENCY</div>
+<div class="flex items-end gap-md">
+<span class="font-headline-xl text-3xl text-primary-fixed-dim">12ms</span>
+<div class="flex-1 flex items-end gap-[2px] h-8 pb-1">
+<div class="w-1 bg-primary/20 h-2"></div>
+<div class="w-1 bg-primary/40 h-4"></div>
+<div class="w-1 bg-primary/60 h-3"></div>
+<div class="w-1 bg-primary/80 h-6"></div>
+<div class="w-1 bg-primary h-5"></div>
+<div class="w-1 bg-primary h-7"></div>
+</div>
+</div>
+</div>
+<div class="col-span-3 row-span-2 rounded-lg border border-primary/10 bg-surface-container-high/40 p-md flex flex-col justify-between">
+<div class="font-label-caps text-[10px] text-on-surface-variant/60 tracking-widest">ENCRYPTION_STRENGTH</div>
+<div class="flex items-center justify-between">
+<span class="font-headline-xl text-3xl text-primary-fixed-dim">SHA-512</span>
+<span class="material-symbols-outlined text-primary text-2xl">verified_user</span>
+</div>
+<div class="w-full h-1 bg-surface-variant mt-2 rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed-dim w-full shadow-[0_0_10px_#00daf3]"></div>
+</div>
+</div>
+<div class="col-span-2 row-span-2 rounded-lg border border-primary/10 bg-surface-container-high/40 p-md flex flex-col items-center justify-center gap-sm">
+<div class="w-16 h-16 border-2 border-dashed border-primary/30 rounded-full flex items-center justify-center relative">
+<div class="absolute inset-0 border-2 border-primary rounded-full animate-ping opacity-20"></div>
+<span class="material-symbols-outlined text-primary text-3xl">satellite_alt</span>
+</div>
+<span class="font-data-mono text-[10px] text-primary">SATELLITE_LINK_LOCKED</span>
+</div>
+</main>
+<!-- FAB Overlay -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-[0_0_20px_rgba(0,229,255,0.4)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: &quot;FILL&quot; 1;">add_moderator</span>
+</button>
+<script>
+        // Micro-interaction: Update coordinates randomly
+        setInterval(() => {
+            const lat = (Math.random() * (34.0600 - 34.0500) + 34.0500).toFixed(4);
+            const lng = (Math.random() * (118.2500 - 118.2400) + 118.2400).toFixed(4);
+            document.querySelectorAll('.font-data-mono').forEach(el => {
+                if(el.textContent.includes('LAT:')) el.textContent = `LAT: ${lat}° N`;
+                if(el.textContent.includes('LNG:')) el.textContent = `LNG: ${lng}° W`;
+            });
+        }, 5000);
+
+        // Micro-interaction: Flickering status light
+        const systemActive = document.querySelector('.tracking-widest');
+        setInterval(() => {
+            systemActive.style.opacity = Math.random() > 0.1 ? '1' : '0.4';
+        }, 2000);
+    </script>
+
+
+</body></html>
